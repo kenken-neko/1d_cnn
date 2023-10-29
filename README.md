@@ -1,1 +1,1 @@
-# 1d_cnn
+# keras_1dconv_regression
