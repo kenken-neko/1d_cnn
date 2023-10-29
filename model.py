@@ -1,6 +1,8 @@
 import keras
 
 
+keras.utils.set_random_seed(42)
+
 def build_1d_conv_model():
   model = keras.Sequential(name="model_conv1D")
   model.add(keras.layers.Input(shape=(n_timesteps, n_features)))
