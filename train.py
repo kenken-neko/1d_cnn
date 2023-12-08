@@ -8,6 +8,7 @@ from .model import build_1d_conv_model
 def main(
     train_dataset_path: str,
     valid_dataset_path: str,
+    save_model_path: str,
 ):
     # Load dataset
     train_dataset = pd.read_csv(train_dataset_path)
@@ -40,6 +41,8 @@ def main(
         verbose=-1,
         callbacks=[callback],
     )
+
+    cnn_model.save(save_model_path)
 
 
 if __name__ == "__main__":
