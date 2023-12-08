@@ -6,6 +6,7 @@ authors = ["dummy"]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.12"
+typer = "^0.9.0"
 
 [tool.poetry.dev-dependencies]
 
