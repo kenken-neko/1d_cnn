@@ -1,6 +1,7 @@
 import pandas as pd
 import tensorflow as tf
 import typer
+from sklearn.preprocessing import StandardScaler
 
 from .model import build_1d_conv_model
 
@@ -18,6 +19,10 @@ def main(
     valid_dataset = pd.read_csv(valid_dataset_path)
     valid_x = valid_dataset["x"]
     valid_y = valid_dataset["y"]
+
+    scaler = StandardScaler()
+    train_x = scaler.fit(train_x)
+    valid_x = scaler.transform(valid_x)
 
     # Load model
     model_conv1D = build_1d_conv_model()
