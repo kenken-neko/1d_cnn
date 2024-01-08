@@ -1,28 +1,27 @@
+from pathlib import Path
+
 import pandas as pd
 import tensorflow as tf
 import typer
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import KFold
 
 from .model import build_1d_conv_model
 
 
 def main(
-    train_dataset_path: str,
-    valid_dataset_path: str,
-    save_model_path: str,
+    dataset_path: str,
+    labels_path: str,
+    save_model_dir: str,
+    cv_n_splits: int,
 ):
     # Load dataset
-    train_dataset = pd.read_csv(train_dataset_path)
-    train_x = train_dataset["x"]
-    train_y = train_dataset["y"]
+    dataset = pd.read_csv(dataset_path)
+    labels = pd.read_csv(labels_path)
 
-    valid_dataset = pd.read_csv(valid_dataset_path)
-    valid_x = valid_dataset["x"]
-    valid_y = valid_dataset["y"]
-
+    # TODO: save StandardScaler object for predictions by using same scaler
     scaler = StandardScaler()
-    train_x = scaler.fit(train_x)
-    valid_x = scaler.transform(valid_x)
+    dataset = scaler.fit(dataset)
 
     # Load model
     model_conv1D = build_1d_conv_model()
@@ -38,16 +37,27 @@ def main(
         start_from_epoch=0,
     )
 
-    cnn_model = model_conv1D.fit(
-        train_x,
-        train_y,
-        epochs=100,
-        validation_data=(valid_x, valid_y),
-        verbose=-1,
-        callbacks=[callback],
-    )
+    cnn_models = []
+    kf = KFold(n_splits=cv_n_splits, shuffle=True, random_state=42)
+    for fold, (train_indices, valid_indices) in enumerate(kf.split(dataset)):
+        train_x = dataset[train_indices]
+        valid_x = dataset[valid_indices]
+        train_y = labels[train_indices]
+        valid_y = labels[valid_indices]
 
-    cnn_model.save(save_model_path)
+        cnn_model = model_conv1D.fit(
+            train_x,
+            train_y,
+            epochs=100,
+            validation_data=(valid_x, valid_y),
+            verbose=-1,
+            callbacks=[callback],
+        )
+
+        save_model_path = Path(save_model_dir) / f"model_{fold}"
+        cnn_model.save(save_model_path)
+
+        cnn_models.append(cnn_model)
 
 
 if __name__ == "__main__":
