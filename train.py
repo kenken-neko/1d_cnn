@@ -14,6 +14,7 @@ def main(
     labels_path: str,
     save_model_dir: str,
     cv_n_splits: int,
+    random_state: int = 42,
 ):
     # Load dataset
     dataset = pd.read_csv(dataset_path)
@@ -38,7 +39,7 @@ def main(
     )
 
     cnn_models = []
-    kf = KFold(n_splits=cv_n_splits, shuffle=True, random_state=42)
+    kf = KFold(n_splits=cv_n_splits, shuffle=True, random_state=random_state)
     for fold, (train_indices, valid_indices) in enumerate(kf.split(dataset)):
         train_x = dataset[train_indices]
         valid_x = dataset[valid_indices]
