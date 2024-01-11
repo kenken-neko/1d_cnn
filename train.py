@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
+import pickle
 import tensorflow as tf
 import typer
 from sklearn.preprocessing import StandardScaler
@@ -20,10 +21,10 @@ def main(
     dataset = pd.read_csv(dataset_path)
     labels = pd.read_csv(labels_path)
 
-    # TODO: save StandardScaler object for predictions by using same scaler
     scaler = StandardScaler()
     dataset = scaler.fit(dataset)
-
+    with open(Path(save_model_path)/"scaler.pkl") as f:
+        pickle.dump(scaler, f)
     # Load model
     model_conv1D = build_1d_conv_model()
 
