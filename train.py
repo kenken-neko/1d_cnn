@@ -23,7 +23,7 @@ def main(
 
     scaler = StandardScaler()
     dataset = scaler.fit(dataset)
-    with open(Path(save_model_path)/"scaler.pkl") as f:
+    with open(Path(save_model_dir)/"scaler.pkl") as f:
         pickle.dump(scaler, f)
     # Load model
     model_conv1D = build_1d_conv_model()
